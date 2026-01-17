@@ -260,8 +260,9 @@ class WebAgentTextEnv(gym.Env):
         obs = self.observation
         self.prev_obs = [obs]
         self.prev_actions = []
-        obs = html_to_markdown(obs)
-        return obs, None
+        if self.observation_mode == 'html':
+            obs = html_to_markdown(obs)
+        return obs, {}
 
     def render(self, mode='human'):
         pass
@@ -304,6 +305,7 @@ class SimServer:
         num_products=None,
         human_goals=0,
         show_attrs=False,
+        seed=42,
     ):
         """
         Constructor for simulated server serving WebShop application
@@ -325,7 +327,7 @@ class SimServer:
         self.show_attrs = show_attrs
 
         # Fix outcome for random shuffling of goals
-        random.seed(233)
+        random.seed(seed)
         random.shuffle(self.goals)
 
         # Apply `filter_goals` parameter if exists to select speific goal(s)
